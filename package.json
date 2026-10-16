@@ -1,0 +1,30 @@
+{
+    "name": "codex-completion-notifier",
+    "displayName": "Local Agent Completion Notifier",
+    "description": "Show a VS Code notification when a supported local AI agent turn ends.",
+    "version": "0.3.0",
+    "publisher": "brian-local",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BrianChang1212/local-agent-completion-notifier.git"
+    },
+    "engines": {
+        "vscode": "^1.90.0"
+    },
+    "extensionKind": [
+        "ui"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./source/extension.js",
+    "scripts": {
+        "test": "node --test test/*.test.js && powershell.exe -NoProfile -ExecutionPolicy Bypass -File test/bridge.test.ps1",
+        "package:verify": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/verify-release-readiness.ps1 && node -e \"require('node:fs').mkdirSync('release', { recursive: true })\" && vsce package --allow-missing-repository --out release/local-agent-completion-notifier-0.3.0.vsix && powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/verify-vsix.ps1 release/local-agent-completion-notifier-0.3.0.vsix"
+    },
+    "devDependencies": {
+        "@vscode/vsce": "^4.0.0"
+    },
+    "icon": "images/icon.png"
+}

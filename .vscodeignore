@@ -1,0 +1,8 @@
+.github/**
+docs/**
+test/**
+node_modules/**
+release/**
+scripts/verify-vsix.ps1
+scripts/verify-release-readiness.ps1
+*.log

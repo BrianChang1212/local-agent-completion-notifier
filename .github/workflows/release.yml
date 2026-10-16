@@ -1,0 +1,36 @@
+name: Prepare VSIX
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install dependencies
+        run: npm.cmd ci
+      - name: Run tests
+        run: npm.cmd test
+      - name: Package and verify VSIX
+        run: npm.cmd run package:verify
+      - name: Record SHA-256
+        shell: pwsh
+        run: |
+          Get-ChildItem release -Filter *.vsix | ForEach-Object {
+            $hash = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash
+            "$($_.Name) SHA256 $hash" | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+          }
+      - name: Save VSIX
+        uses: actions/upload-artifact@v4
+        with:
+          name: vsix-${{ github.sha }}
+          path: release/*.vsix
+          if-no-files-found: error

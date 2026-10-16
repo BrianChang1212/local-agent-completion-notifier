@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Local Agent Completion Notifier",
+      "description": "Notify VS Code when a local Kiro CLI V3 turn completes.",
+      "trigger": "Stop",
+      "action": {
+        "type": "command",
+        "command": "powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File __LOCAL_AGENT_KIRO_BRIDGE__"
+      },
+      "timeout": 10,
+      "enabled": true
+    }
+  ]
+}
