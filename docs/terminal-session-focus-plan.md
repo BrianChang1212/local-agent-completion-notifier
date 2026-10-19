@@ -16,4 +16,4 @@ The extension compares the event's process ancestry with terminals in the curren
 
 ## Verification
 
-Automated tests cover payload validation, dispatcher forwarding, process identity matching, duplicate handling, terminal focus action selection, unmatched reminders, and compatibility with legacy Codex events. The user confirmed that a local notification appeared and selecting it switched to the matching session terminal in a Windows VS Code integrated terminal. Pure-chat and unmatched-terminal paths have automated coverage but have not been separately confirmed in a live session.
+Automated tests cover payload validation, dispatcher forwarding, process identity matching, duplicate handling, terminal focus action selection, unmatched reminders, and compatibility with legacy Codex events. A text-only Codex CLI turn produced a process-aware event; VS Code displayed a general reminder without a terminal action when the turn ran outside an integrated terminal. The user confirmed that a text-only turn in a Windows VS Code integrated terminal produced a notification and that selecting it switched to the matching terminal.

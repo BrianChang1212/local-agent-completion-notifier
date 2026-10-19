@@ -4,7 +4,7 @@
 
 - Released 0.3.1 with a portable Codex notification dispatcher and process-aware bridge.
 - Added a general reminder for Codex turns without a unique integrated-terminal match; a unique match still offers a switch action.
-- Verified the local notification and switch action in a Windows VS Code integrated terminal. Pure-chat and unmatched-terminal paths have automated coverage but have not been separately confirmed in a live session.
+- Verified a text-only Codex CLI turn emitted a process-aware event. VS Code displayed a general reminder without a terminal action when the turn ran outside an integrated terminal. The user confirmed the notification and terminal switch for a text-only turn in a Windows VS Code integrated terminal.
 
 ## 2026-10-15
 
