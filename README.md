@@ -21,7 +21,7 @@ The current supported environment is local Windows VS Code integrated terminals.
 
 ## Install and configure
 
-Install the VSIX in VS Code. Then clone or download the matching source version and run the provider setup helper from the repository root. The helpers copy the bridges to `%LOCALAPPDATA%\LocalAgentCompletionNotifier\bridge`, so they do not depend on the source repository remaining on disk after setup.
+Install [Local Agent Completion Notifier from the VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=brian-chang.codex-completion-notifier) or install the matching VSIX in VS Code. Then clone or download the matching source version and run the provider setup helper from the repository root. The helpers copy the bridges to `%LOCALAPPDATA%\LocalAgentCompletionNotifier\bridge`, so they do not depend on the source repository remaining on disk after setup.
 
 ### Codex CLI
 
