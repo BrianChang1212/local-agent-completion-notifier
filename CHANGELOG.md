@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+- Routed Codex turn-end notifications through a portable dispatcher that forwards the existing Computer Use notification and queues a process-aware VS Code event.
+- Added a general reminder when a Codex event cannot be uniquely matched to a terminal, while keeping terminal switching available for a unique match.
+- Updated the Codex setup helper to install both dispatcher and bridge under local app data and print the user-level `notify` command.
+
 ## 0.3.0
 
 - Renamed the product to **Local Agent Completion Notifier** while preserving the existing extension identifier.

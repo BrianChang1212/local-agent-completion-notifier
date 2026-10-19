@@ -6,7 +6,7 @@ const { spawnSync } = require('node:child_process');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-test('PowerShell CLI receives Codex JSON payload intact', { timeout: 10000 }, () => {
+test('PowerShell stdin receives Codex JSON payload intact', { timeout: 10000 }, () => {
   const testRoot = path.join(__dirname, '.bridge-process-test');
   assert.equal(fs.existsSync(testRoot), false, `Test directory already exists: ${testRoot}`);
   fs.mkdirSync(testRoot);
@@ -24,10 +24,11 @@ test('PowerShell CLI receives Codex JSON payload intact', { timeout: 10000 }, ()
       '-NoProfile',
       '-ExecutionPolicy', 'Bypass',
       '-File', bridge,
-      JSON.stringify(payload),
+      '-ReadPayloadFromStdin',
       '-SkipLegacyNotifier',
     ], {
       encoding: 'utf8',
+      input: JSON.stringify(payload),
       env: { ...process.env, LOCAL_AGENT_COMPLETION_NOTIFIER_DATA_ROOT: testRoot },
     });
 

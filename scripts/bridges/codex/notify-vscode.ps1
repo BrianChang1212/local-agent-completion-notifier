@@ -1,10 +1,15 @@
 ﻿param(
-    [Parameter(Mandatory = $true, Position = 0)]
+    [Parameter(Position = 0)]
     [string]$Payload,
-    [switch]$SkipLegacyNotifier
+    [switch]$SkipLegacyNotifier,
+    [switch]$ReadPayloadFromStdin
 )
 
 $ErrorActionPreference = 'Stop'
+
+if ($ReadPayloadFromStdin) {
+    $Payload = [Console]::In.ReadToEnd()
+}
 
 try {
     $notification = $Payload | ConvertFrom-Json -ErrorAction Stop

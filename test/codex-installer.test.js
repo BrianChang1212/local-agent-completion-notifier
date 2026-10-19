@@ -10,12 +10,14 @@ const assert = require('node:assert/strict');
 const projectRoot = path.join(__dirname, '..');
 const installerPath = path.join(projectRoot, 'scripts', 'install-codex-bridge.ps1');
 const sourcePath = path.join(projectRoot, 'scripts', 'bridges', 'codex', 'notify-vscode.ps1');
+const dispatcherSourcePath = path.join(projectRoot, 'scripts', 'bridges', 'codex', 'notify-dispatch.js');
 
 test('Codex installer copies the bridge to stable local data and prints a user-level config command', { timeout: 15000 }, () => {
   const testRoot = path.join(os.tmpdir(), `local-agent-completion-notifier-codex-installer-${process.pid}`);
   assert.equal(fs.existsSync(testRoot), false, `Test directory already exists: ${testRoot}`);
   const localAppData = path.join(testRoot, 'Local App Data');
-  const destinationPath = path.join(localAppData, 'LocalAgentCompletionNotifier', 'bridge', 'notify-codex.ps1');
+  const destinationPath = path.join(localAppData, 'LocalAgentCompletionNotifier', 'bridge', 'notify-vscode.ps1');
+  const dispatcherDestinationPath = path.join(localAppData, 'LocalAgentCompletionNotifier', 'bridge', 'notify-dispatch.js');
   fs.mkdirSync(testRoot, { recursive: true });
   try {
     const result = spawnSync('powershell.exe', [
@@ -24,8 +26,11 @@ test('Codex installer copies the bridge to stable local data and prints a user-l
     assert.equal(result.error, undefined, result.error && result.error.message);
     assert.equal(result.status, 0, result.stderr || result.stdout);
     assert.equal(fs.readFileSync(destinationPath, 'utf8'), fs.readFileSync(sourcePath, 'utf8'));
+    assert.equal(fs.readFileSync(dispatcherDestinationPath, 'utf8'), fs.readFileSync(dispatcherSourcePath, 'utf8'));
     assert.match(result.stdout, /notify = \[/);
-    assert.ok(result.stdout.includes(destinationPath.replaceAll('\\', '\\\\')));
+    const config = JSON.parse(result.stdout.match(/notify = (\[[^\r\n]+\])/)[1]);
+    assert.match(config[0], /node\.exe$/i);
+    assert.equal(config[1], dispatcherDestinationPath);
     assert.ok(!result.stdout.includes(projectRoot));
   } finally {
     fs.rmSync(testRoot, { recursive: true, force: true });

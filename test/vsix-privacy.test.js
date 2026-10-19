@@ -21,6 +21,7 @@ function createFixtureVsix(root, name, readmeText) {
     'source/notification-claims.js': 'module.exports = {};',
     'config/kiro/completion-notifier.json': '{}',
     'scripts/bridges/codex/notify-vscode.ps1': 'Write-Output ok',
+    'scripts/bridges/codex/notify-dispatch.js': 'module.exports = {};',
     'scripts/bridges/kiro/notify-vscode.ps1': 'Write-Output ok',
     'scripts/install-codex-bridge.ps1': 'Write-Output ok',
     'scripts/install-kiro-hook.ps1': 'Write-Output ok',
@@ -58,7 +59,7 @@ test('VSIX verifier accepts a clean package and rejects a personal Windows path'
     ], { encoding: 'utf8' });
     assert.equal(cleanResult.error, undefined, cleanResult.error && cleanResult.error.message);
     assert.equal(cleanResult.status, 0, `${cleanResult.stderr || ''}\n${cleanResult.stdout || ''}`);
-    assert.match(cleanResult.stdout, /Verified brian-local\.codex-completion-notifier 0\.3\.0/);
+    assert.match(cleanResult.stdout, /Verified brian-chang\.codex-completion-notifier 0\.3\.1/);
 
     const privateArchive = createFixtureVsix(tempRoot, 'private', 'Local path: C:\\Users\\Example\\project');
     const privateResult = spawnSync('powershell.exe', [

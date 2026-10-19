@@ -39,6 +39,7 @@ try {
         'source/notification.js',
         'config/kiro/completion-notifier.json',
         'scripts/bridges/codex/notify-vscode.ps1',
+        'scripts/bridges/codex/notify-dispatch.js',
         'scripts/bridges/kiro/notify-vscode.ps1',
         'scripts/install-codex-bridge.ps1',
         'scripts/install-kiro-hook.ps1',

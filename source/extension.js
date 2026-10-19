@@ -8,7 +8,7 @@ const { claimReminderMarker, releaseReminderMarker } = require('./notification-c
 const { showCompletionNotification, showCompletionReminder } = require('./notification-ui');
 const { findMatchingTerminal } = require('./terminal-matcher');
 
-const KIRO_FALLBACK_GRACE_MS = 2000;
+const UNMATCHED_FALLBACK_GRACE_MS = 2000;
 
 const dataRoot = process.env.LOCAL_AGENT_COMPLETION_NOTIFIER_DATA_ROOT || path.join(
   process.env.LOCALAPPDATA || path.join(require('node:os').homedir(), 'AppData', 'Local'),
@@ -60,24 +60,37 @@ async function activate(context) {
             if (event.schemaVersion === 2 || event.schemaVersion === 3) {
               const terminal = await findMatchingTerminal(vscode.window.terminals, event.sourceProcesses);
               if (!terminal) {
-                if (event.provider !== 'kiro' || Date.now() - Date.parse(event.completedAt) < KIRO_FALLBACK_GRACE_MS) {
+                if (Date.now() - Date.parse(event.completedAt) < UNMATCHED_FALLBACK_GRACE_MS) {
                   continue;
                 }
                 const markerPath = await claimReminderMarker(fs.promises, filePath);
                 if (!markerPath) continue;
                 try {
                   await showCompletionReminder(vscode, event);
-                  output.appendLine('Displayed a Kiro completion reminder without a terminal action because no unique terminal matched.');
+                  const providerName = event.provider === 'kiro' ? 'Kiro' : 'Codex';
+                  output.appendLine(`Displayed a ${providerName} completion reminder without a terminal action because no unique terminal matched.`);
+                  if (event.provider !== 'kiro') {
+                    await fs.promises.unlink(filePath);
+                    await releaseReminderMarker(fs.promises, filePath);
+                  }
                 } catch (error) {
                   await releaseReminderMarker(fs.promises, filePath).catch(() => {});
                   throw error;
                 }
                 continue;
               }
-              const focused = await showCompletionNotification(vscode, event, terminal);
-              if (focused) {
-                const terminalPid = await terminal.processId;
-                output.appendLine(`Terminal focus: "${terminal.name}" (PID ${terminalPid}); active=${vscode.window.activeTerminal === terminal}`);
+              const markerPath = event.schemaVersion === 2
+                ? await claimReminderMarker(fs.promises, filePath) : null;
+              if (event.schemaVersion === 2 && !markerPath) continue;
+              try {
+                const focused = await showCompletionNotification(vscode, event, terminal);
+                if (focused) {
+                  const terminalPid = await terminal.processId;
+                  output.appendLine(`Terminal focus: "${terminal.name}" (PID ${terminalPid}); active=${vscode.window.activeTerminal === terminal}`);
+                }
+              } catch (error) {
+                if (markerPath) await releaseReminderMarker(fs.promises, filePath).catch(() => {});
+                throw error;
               }
             } else {
               await showCompletionNotification(vscode, event);
